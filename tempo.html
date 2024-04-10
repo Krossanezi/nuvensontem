@@ -1,0 +1,69 @@
+
+<html>
+    <head>
+    <title>Nuvens</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <h1>City's Weather</h1>
+
+
+
+  <!-- Adicionando Javascript -->
+<script>
+//Na linha abaixo está o erro
+
+const express = require('express');
+const axios = require('axios');
+ 
+const app = express();
+const PORT = 3000;
+
+// Chave de API da OpenWeatherMap
+const API_KEY = '7e5d6f415546ac7d0e4e3f8f2edf97dc';
+
+// Endpoint para obter a previsão do tempo
+app.get('/weather', async (req, res) => {
+    const city = req.query.city;
+    if (!city) {
+        return res.status(400).json({ error: 'O parâmetro "city" é obrigatório' });
+    }
+
+    try {
+        const response = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`);
+        
+        const { description } = response.data.weather[0];
+        const { temp } = response.data.main;
+
+        const result = {
+            city,
+            weather_description: description,
+            temperature: temp
+        };
+
+        res.json(result);
+    } catch (error) {
+        console.error('Erro ao obter a previsão do tempo:', error.message);
+        res.status(error.response.status || 500).json({ error: 'Falha ao obter a previsão do tempo' });
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`Servidor iniciado na porta ${PORT}`);
+});
+
+    </script>
+    </head>
+
+    <body>
+        
+    <!-- Inicio do formulario -->
+      <form method="get" action=".">
+        <br>    <label>Cidade:
+            <input name="cidade" type="text" id="cidade" size="60" /></label><br />
+           <br>   
+            <input type="button" name="Pesquisar" onclick="buscaropenweathermap()" value="Pesquisar">
+              </form>
+            
+    </body>
+
+    </html>
